@@ -11,11 +11,12 @@ class PhemexService:
         self.phemex_client = phemex_client
         self.markets = phemex_client.load_markets()
         self.phemex_trade_builder = PhemexTradeBuilder(self.markets)
+        self.trade_validator = TradeValidator(self.markets)
 
     def place_trades_on_exchange(self, trades: pd.DateFrame):
         logging.info("Start place trades on exchange")
         for trade in trades:
-            validate_errors = TradeValidator.validate(trade)
+            validate_errors = self.trade_validator.validate(trade)
             if len(validate_errors) > 0:
                 self.__log_trade_error(trade, "Skip trade because contains validations error")
                 self.__log_trade_error(trade, "Trade inputs: {}", trade)
@@ -49,6 +50,8 @@ class PhemexService:
                 self.__log_trade_error(trade, "Create order response: {}", create_order_response)
                 continue
 
+            "If Last Price goes up to 25000.0, it will trigger market order Take Profit estimated profit: 4.73 USD."
+            "If Mark Price goes down to 18.0, it will trigger market order Stop Loss estimated loss: 20.24 USD."
             self.__log_trade_info("Finished place trade on Phemex exchange")
 
         logging.info("Finished place trades on Phemex exchange")
