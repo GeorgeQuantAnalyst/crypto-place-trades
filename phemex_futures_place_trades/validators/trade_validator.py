@@ -4,7 +4,7 @@ import pandas as pd
 class TradeValidator:
     LEVERAGE_MAX = 20
 
-    def __int__(self, markets):
+    def __init__(self, markets):
         self.markets = markets
 
     def validate(self, trade: pd.Series):
@@ -19,7 +19,7 @@ class TradeValidator:
         if len(missing_attribute_errors) > 0:
             return missing_attribute_errors
 
-        format_errors = self.__validate_exist_ticker_on_exchange(trade["asset"], self.markets) + \
+        format_errors = self.__validate_exist_ticker_on_exchange(trade["Asset"], self.markets) + \
                         self.__validate_float_number(trade, "Entry price") + \
                         self.__validate_float_number(trade, "Stop loss") + \
                         self.__validate_float_number(trade, "Profit target 1") + \
@@ -30,12 +30,12 @@ class TradeValidator:
         if len(format_errors) > 0:
             return format_errors
 
-        logic_errors = self.__validate_greater_than(trade, "Entry price", 0) + \
-                       self.__validate_greater_than(trade, "Stop loss", 0) + \
-                       self.__validate_greater_than(trade, "Profit target 1", 0) + \
-                       self.__validate_greater_than(trade, "Position", 0) + \
-                       self.__validate_greater_than(trade, "Leverage", 0) + \
-                       self.__validate_smaller_than(trade, "Leverage", self.LEVERAGE_MAX + 0.01)
+        logic_errors = self.__validate_greater_than_value(trade, "Entry price", 0) + \
+                       self.__validate_greater_than_value(trade, "Stop loss", 0) + \
+                       self.__validate_greater_than_value(trade, "Profit target 1", 0) + \
+                       self.__validate_greater_than_value(trade, "Position", 0) + \
+                       self.__validate_greater_than_value(trade, "Leverage", 0) + \
+                       self.__validate_smaller_than_value(trade, "Leverage", self.LEVERAGE_MAX + 0.01)
 
         if trade["Direction"] == "long":
             logic_errors = logic_errors + \
@@ -82,7 +82,7 @@ class TradeValidator:
         attribute_smaller_value = float(trade[attribute_smaller])
         attribute_bigger_value = float(trade[attribute_bigger])
 
-        if attribute_smaller_value > attribute_bigger_value:
+        if attribute_bigger_value > attribute_smaller_value:
             validation_errors.append("Attribute {} - {} must be greater than attribute {} - {}".format(
                 attribute_bigger, attribute_bigger_value,
                 attribute_smaller, attribute_smaller_value))
@@ -96,9 +96,29 @@ class TradeValidator:
         attribute_bigger_value = float(trade[attribute_bigger])
 
         if attribute_smaller_value > attribute_bigger_value:
-            validation_errors.append("Attribute {} - {} must be greater than attribute {} - {}".format(
-                attribute_bigger, attribute_bigger_value,
-                attribute_smaller, attribute_smaller_value))
+            validation_errors.append("Attribute {} - {} must be smaller than attribute {} - {}".format(
+                attribute_smaller, attribute_smaller_value,
+                attribute_bigger, attribute_bigger_value))
+
+        return validation_errors
+
+    @staticmethod
+    def __validate_greater_than_value(trade, attribute, value):
+        validation_errors = []
+
+        if float(trade[attribute]) < value:
+            validation_errors.append("Attribute {} - {} must be greater than {}".format(
+                attribute, float(trade[attribute]), value))
+
+        return validation_errors
+
+    @staticmethod
+    def __validate_smaller_than_value(trade, attribute, value):
+        validation_errors = []
+
+        if float(trade[attribute]) > value:
+            validation_errors.append("Attribute {} - {} must be smaller than {}".format(
+                attribute, float(trade[attribute]), value))
 
         return validation_errors
 

@@ -17,6 +17,7 @@ class PhemexTradeBuilder:
                 "side": "buy" if trade["Direction"] == "long" else "sell",
                 "leverage": self.__parse_leverage(trade),
                 "amount": trade["Position"] / contract_size,
+                "price": trade["Entry price"],
                 "params": {"stopPxEp": int(trade["Entry price"] * self.PRICE_SCALE),
                            "triggerType": "ByLastPrice",
                            "takeProfitEp": int(trade["Profit target 1"] * self.PRICE_SCALE),
