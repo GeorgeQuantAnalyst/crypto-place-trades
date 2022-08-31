@@ -12,7 +12,7 @@ class PhemexService:
     def __init__(self, phemex_client):
         self.phemex_client = phemex_client
         self.markets = phemex_client.load_markets()
-        self.phemex_trade_builder = PhemexTradeBuilder(self.markets)
+        self.phemex_trade_builder = PhemexTradeBuilder(self.markets, phemex_client)
         self.trade_validator = TradeValidator(self.markets)
 
     def place_trades_on_exchange(self, trades: pd.DataFrame):

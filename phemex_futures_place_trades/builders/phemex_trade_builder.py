@@ -2,15 +2,16 @@ import pandas as pd
 
 
 class PhemexTradeBuilder:
-    PRICE_SCALE = 10000
     LEVERAGE_MIN = 1
 
-    def __init__(self, markets):
+    def __init__(self, markets, phemex_client):
         self.markets = markets
+        self.phemex_client = phemex_client
 
     def build(self, trade: pd.Series):
         ticker = "{}/USD:USD".format(trade["Asset"].replace("USDT", ""))
-        contract_size_raw = self.markets[ticker]["info"]["contractSize"]
+        market = self.markets[ticker]
+        contract_size_raw = market["info"]["contractSize"]
         contract_size = float(contract_size_raw.split()[0])
 
         return {"ticker": ticker,
@@ -19,11 +20,11 @@ class PhemexTradeBuilder:
                 "leverage": self.__parse_leverage(trade),
                 "amount": trade["Position"] / contract_size,
                 "price": trade["Entry price"],
-                "params": {"stopPxEp": int(trade["Entry price"] * self.PRICE_SCALE),
+                "params": {"stopPxEp": self.phemex_client.to_ep(trade["Entry price"], market),
                            "triggerType": "ByLastPrice",
-                           "takeProfitEp": int(trade["Profit target 1"] * self.PRICE_SCALE),
+                           "takeProfitEp": self.phemex_client.to_ep(trade["Profit target 1"], market),
                            "tpTrigger": "ByLastPrice",
-                           "stopLossEp": int(trade["Stop loss"] * self.PRICE_SCALE),
+                           "stopLossEp": self.phemex_client.to_ep(trade["Stop loss"], market),
                            "slTrigger": "ByLastPrice"}
                 }
 
