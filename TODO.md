@@ -5,8 +5,8 @@
 
 * [x] Implement class PhemexTradeBuilder
 * [x] Implement class TradeValidator
-* [] Implement logic method __is_successful_set_leverage()
-* [] Implement logic method __is_successful_place_trade()
+* [x] Implement logic method __is_successful_set_leverage()
+* [x] Implement logic method __is_successful_place_trade()
 * [x] Create build
 * [x] Create bash scripts and add execute rights (build.sh, deploy.sh, run.sh)
 

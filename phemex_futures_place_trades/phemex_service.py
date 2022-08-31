@@ -50,7 +50,7 @@ class PhemexService:
                 phemex_trade["params"])
 
             if self.__is_successful_place_trade(create_order_response):
-                self.__log_trade_info(trade, "Successfully place on Phemex exchange.")
+                self.__log_trade_info(trade, "Successfully place on Phemex exchange. 🌟 🐟 🐻")
             else:
                 self.__log_trade_error(trade, "Error in place trade on Phemex exchange")
                 self.__log_trade_error(trade, "Create order response: {}", create_order_response)
@@ -66,15 +66,13 @@ class PhemexService:
 
     @staticmethod
     def __is_successful_set_leverage(leverage_response):
-        logging.info(leverage_response)
-        # TODO: implement me
-        return True
+        logging.debug("Leverage response: {}".format(leverage_response))
+        return leverage_response["code"] == "0" and leverage_response["data"] == "OK"
 
     @staticmethod
     def __is_successful_place_trade(create_order_response):
-        logging.info(create_order_response)
-        # TODO: implement me
-        return True
+        logging.debug("Create order response: {}".format(create_order_response))
+        return create_order_response["info"]["bizError"] == "0"
 
     @staticmethod
     def __log_trade_info(trade, message, params=[]):
