@@ -9,52 +9,29 @@ from phemex_futures_place_trades.validators.trade_validator import TradeValidato
 class PhemexService:
     def __int__(self, phemex_client):
         self.phemex_client = phemex_client
+        self.markets = phemex_client.load_markets()
+        self.phemex_trade_builder = PhemexTradeBuilder(self.markets)
 
     def place_trades_on_exchange(self, trades: pd.DateFrame):
         logging.info("Start place trades on exchange")
         for trade in trades:
             validate_errors = TradeValidator.validate(trade)
             if len(validate_errors) > 0:
-                logging.error(
-                    "Trade {}-{}: Skip trade because contains validations error".format(
-                        trade["Asset"],
-                        trade["Direction"]))
-                logging.error("Trade {}-{}: Trade inputs: {}".format(
-                    trade["Asset"],
-                    trade["Direction"],
-                    trade))
-                logging.error("Trade {}-{}: Validations error: {}".format(
-                    trade["Asset"],
-                    trade["Direction"],
-                    validate_errors))
+                self.__log_trade_error(trade, "Skip trade because contains validations error")
+                self.__log_trade_error(trade, "Trade inputs: {}", trade)
+                self.__log_trade_error(trade, "Validation errors: {}", validate_errors)
                 continue
-            phemex_trade = PhemexTradeBuilder.build(trade)
 
-            logging.info("Trade {}-{}: start place trade on exchange".format(
-                phemex_trade["ticker"],
-                phemex_trade["direction"]
-            ))
+            phemex_trade = self.phemex_trade_builder.build(trade)
+
+            self.__log_trade_info(trade, "start place trade on Phemex exchange")
             leverage_response = self.phemex_client.set_leverage(phemex_trade["leverage"], phemex_trade["ticker"])
             if self.__is_successful_set_leverage(leverage_response):
-                logging.info("Trade {}-{}: Successfully set leverage {}".format(
-                    phemex_trade["ticker"],
-                    phemex_trade["direction"],
-                    phemex_trade["leverage"]))
+                self.__log_trade_info(trade, "Successfully set leverage {}", phemex_trade["leverage"])
             else:
-                logging.error(
-                    "Trade {}-{}: Error in set leverage {}".format(
-                        phemex_trade["ticker"],
-                        phemex_trade["direction"],
-                        phemex_trade["leverage"]))
-                logging.error("Trade {}-{}: leverage response: {}".format(
-                    phemex_trade["ticker"],
-                    phemex_trade["direction"],
-                    leverage_response))
-                logging.error(
-                    "Trade {}-{}: skip trade because not correct set leverage.".format(
-                        phemex_trade["ticker"],
-                        phemex_trade["direction"]
-                    ))
+                self.__log_trade_error(trade, "Error in set leverage {}", phemex_trade["leverage"])
+                self.__log_trade_error(trade, "Leverage response:", leverage_response)
+                self.__log_trade_error(trade, "Skip trade because not correct set leverage.")
                 continue
 
             create_order_response = self.phemex_client.create_order(
@@ -66,28 +43,15 @@ class PhemexService:
                 phemex_trade["params"])
 
             if self.__is_successful_place_trade(create_order_response):
-                logging.info("Trade {}-{}: successfully place on Phemex exchange.".format(
-                    phemex_trade["ticker"],
-                    phemex_trade["direction"]
-                ))
+                self.__log_trade_info(trade, "Successfully place on Phemex exchange.")
             else:
-                logging.error("Trade {}-{}: error in place trade on exchange".format(
-                    phemex_trade["ticker"],
-                    phemex_trade["direction"]
-                ))
-                logging.error("Trade {}-{}: Create order response: {}".format(
-                    phemex_trade["ticker"],
-                    phemex_trade["direction"],
-                    create_order_response
-                ))
+                self.__log_trade_error(trade, "Error in place trade on Phemex exchange")
+                self.__log_trade_error(trade, "Create order response: {}", create_order_response)
                 continue
 
-            logging.info("Trade {}-{}: finished place to exchange".format(
-                phemex_trade["ticker"],
-                phemex_trade["direction"]
-            ))
+            self.__log_trade_info("Finished place trade on Phemex exchange")
 
-        logging.info("Start place trades on exchange")
+        logging.info("Finished place trades on Phemex exchange")
 
     @staticmethod
     def __is_successful_set_leverage(leverage_response):
@@ -98,3 +62,21 @@ class PhemexService:
     def __is_successful_place_trade(create_order_response):
         # TODO: implement me
         return False
+
+    @staticmethod
+    def __log_trade_info(trade, message, params=[]):
+        info_message = "Trade {}-{}: " + message
+        logging.info(info_message.format(
+            trade["Asset"],
+            trade["Direction"],
+            params
+        ))
+
+    @staticmethod
+    def __log_trade_error(trade, message, params=[]):
+        error_message = "Trade {}-{}: " + message
+        logging.info(error_message.format(
+            trade["Asset"],
+            trade["Direction"],
+            params
+        ))
