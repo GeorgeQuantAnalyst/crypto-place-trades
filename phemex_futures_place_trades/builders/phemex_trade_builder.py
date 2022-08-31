@@ -3,11 +3,28 @@ import pandas as pd
 
 class PhemexTradeBuilder:
     PRICE_SCALE = 10000
+    LEVERAGE_MIN = 1
 
-    @staticmethod
-    def build(trade: pd.Series):
-        phemex_trade = {}
+    def __init__(self, markets):
+        self.markets = markets
 
-        # TODO: implement logic convert and compute attributes for object phemex_trade
+    def build(self, trade: pd.Series):
+        ticker = "{}/USD:USD".format(trade["Asset"].replace("USDT", ""))
+        contract_size = float(self.markets[ticker]["info"]["contractSize"])
 
-        return phemex_trade
+        return {"ticker": ticker,
+                "order_type": "LimitIfTouched",
+                "side": "buy" if trade["Direction"] == "long" else "sell",
+                "leverage": self.__parse_leverage(trade),
+                "amount": trade["Position"] / contract_size,
+                "params": {"stopPxEp": int(trade["Entry price"] * self.PRICE_SCALE),
+                           "triggerType": "ByLastPrice",
+                           "takeProfitEp": int(trade["Profit target 1"] * self.PRICE_SCALE),
+                           "tpTrigger": "ByLastPrice",
+                           "stopLossEp": int(trade["Stop loss"] * self.PRICE_SCALE),
+                           "slTrigger": "ByLastPrice"}
+                }
+
+    def __parse_leverage(self, trade):
+        leverage = round(trade["Leverage"], 2)
+        return leverage if leverage > self.LEVERAGE_MIN else self.LEVERAGE_MIN

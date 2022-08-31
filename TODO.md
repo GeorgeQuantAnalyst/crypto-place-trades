@@ -3,7 +3,7 @@
 ## Tier 1
 -- high priority
 
-* [] Implement class PhemexTradeBuilder
+* [x] Implement class PhemexTradeBuilder
 * [] Implement class TradeValidator
 * [] Implement logic method __is_successful_set_leverage()
 * [] Implement logic method __is_successful_place_trade()
