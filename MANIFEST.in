@@ -4,5 +4,4 @@ include logger.conf
 include place_trades_portfolio1.sh
 include place_trades_portfolio2.sh
 include prepare.sh
-include data/trades_long.xlsx
-include data/trades_short.xlsx
+include data/trades.xlsx

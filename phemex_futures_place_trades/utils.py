@@ -4,7 +4,7 @@ import sys
 import pandas as pd
 import yaml
 
-TRADES_EXCEL_PATH = "data/trades_{}.xlsx"
+TRADES_EXCEL_PATH = "data/trades.xlsx"
 
 
 def load_config(file_path):
@@ -21,7 +21,8 @@ def load_config(file_path):
 
 def load_trades(direction: str, portfolio: str) -> pd.DataFrame:
     logging.debug("Loading {} trades from excel for portfolio {}".format(direction, portfolio))
-    trades = pd.read_excel(TRADES_EXCEL_PATH.format(direction))
+    sheet_name = "TradesLong" if direction == "long" else "TradesShort"
+    trades = pd.read_excel(TRADES_EXCEL_PATH, sheet_name=sheet_name)
     trades_filtered = trades[trades["On exchange"] == portfolio]
     trades_filtered["Direction"] = direction
     logging.debug("Loaded {} trades for portfolio {}".format(trades_filtered.shape[0], portfolio))

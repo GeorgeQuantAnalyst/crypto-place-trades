@@ -96,20 +96,20 @@ class PhemexService:
             estimated_loss = (trade["Stop loss"] - trade["Entry price"]) * trade["Position"]
 
             pt_m = "If Last Price goes up to {}, it will trigger market order Take Profit estimated profit: {} USD." \
-                .format(trade["Profit target 1"], estimated_profit)
+                .format(trade["Profit target 1"], round(estimated_profit,2))
             self.__log_trade_info(trade, pt_m)
 
-            sl_m = "If Mark Price goes down to {}, it will trigger market order Stop Loss estimated loss: {} USD."\
-                .format(trade["Stop loss"], estimated_loss)
-            self.__log_trade_info(trade,sl_m)
+            sl_m = "If Mark Price goes down to {}, it will trigger market order Stop Loss estimated loss: {} USD." \
+                .format(trade["Stop loss"], round(estimated_loss,2))
+            self.__log_trade_info(trade, sl_m)
         else:
             estimated_profit = (trade["Entry price"] - trade["Profit target 1"]) * trade["Position"]
             estimated_loss = (trade["Entry price"] - trade["Stop loss"]) * trade["Position"]
 
             pt_m = "If Last Price goes down to {}, it will trigger market order Take Profit estimated profit: {} USD." \
-                .format(trade["Profit target 1"], estimated_profit)
+                .format(trade["Profit target 1"], round(estimated_profit, 2))
             self.__log_trade_info(trade, pt_m)
 
             sl_m = "If Mark Price goes up to {}, it will trigger market order Stop Loss estimated loss: {} USD." \
-                .format(trade["Stop loss"], estimated_loss)
+                .format(trade["Stop loss"], round(estimated_loss, 2))
             self.__log_trade_info(trade, sl_m)
