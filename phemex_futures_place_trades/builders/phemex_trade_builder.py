@@ -10,7 +10,8 @@ class PhemexTradeBuilder:
 
     def build(self, trade: pd.Series):
         ticker = "{}/USD:USD".format(trade["Asset"].replace("USDT", ""))
-        contract_size = float(self.markets[ticker]["info"]["contractSize"])
+        contract_size_raw = self.markets[ticker]["info"]["contractSize"]
+        contract_size = float(contract_size_raw.split()[0])
 
         return {"ticker": ticker,
                 "order_type": "LimitIfTouched",

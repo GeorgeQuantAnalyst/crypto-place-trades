@@ -7,7 +7,6 @@ from phemex_futures_place_trades.validators.trade_validator import TradeValidato
 
 
 class PhemexService:
-
     SEPARATOR = "---------------------------------------------"
 
     def __init__(self, phemex_client):
@@ -31,7 +30,8 @@ class PhemexService:
 
             phemex_trade = self.phemex_trade_builder.build(trade)
 
-            self.__log_trade_info(trade, "start place trade on Phemex exchange")
+            self.__log_trade_info(trade, "Start place trade on Phemex exchange")
+            self.__log_estimate_pnl_info(trade)
             leverage_response = self.phemex_client.set_leverage(phemex_trade["leverage"], phemex_trade["ticker"])
             if self.__is_successful_set_leverage(leverage_response):
                 self.__log_trade_info(trade, "Successfully set leverage {}", phemex_trade["leverage"])
@@ -56,9 +56,7 @@ class PhemexService:
                 self.__log_trade_error(trade, "Create order response: {}", create_order_response)
                 continue
 
-            "If Last Price goes up to 25000.0, it will trigger market order Take Profit estimated profit: 4.73 USD."
-            "If Mark Price goes down to 18.0, it will trigger market order Stop Loss estimated loss: 20.24 USD."
-            self.__log_trade_info(trade,"Finished place trade on Phemex exchange\n")
+            self.__log_trade_info(trade, "Finished place trade on Phemex exchange\n")
 
         logging.info(self.SEPARATOR)
         logging.info("Finished place trades on Phemex exchange")
@@ -91,3 +89,27 @@ class PhemexService:
             trade["Direction"],
             params
         ))
+
+    def __log_estimate_pnl_info(self, trade):
+        if trade["Direction"] == "long":
+            estimated_profit = (trade["Profit target 1"] - trade["Entry price"]) * trade["Position"]
+            estimated_loss = (trade["Stop loss"] - trade["Entry price"]) * trade["Position"]
+
+            pt_m = "If Last Price goes up to {}, it will trigger market order Take Profit estimated profit: {} USD." \
+                .format(trade["Profit target 1"], estimated_profit)
+            self.__log_trade_info(trade, pt_m)
+
+            sl_m = "If Mark Price goes down to {}, it will trigger market order Stop Loss estimated loss: {} USD."\
+                .format(trade["Stop loss"], estimated_loss)
+            self.__log_trade_info(trade,sl_m)
+        else:
+            estimated_profit = (trade["Entry price"] - trade["Profit target 1"]) * trade["Position"]
+            estimated_loss = (trade["Entry price"] - trade["Stop loss"]) * trade["Position"]
+
+            pt_m = "If Last Price goes down to {}, it will trigger market order Take Profit estimated profit: {} USD." \
+                .format(trade["Profit target 1"], estimated_profit)
+            self.__log_trade_info(trade, pt_m)
+
+            sl_m = "If Mark Price goes up to {}, it will trigger market order Stop Loss estimated loss: {} USD." \
+                .format(trade["Stop loss"], estimated_loss)
+            self.__log_trade_info(trade, sl_m)
