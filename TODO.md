@@ -7,7 +7,7 @@
 * [x] Implement class TradeValidator
 * [] Implement logic method __is_successful_set_leverage()
 * [] Implement logic method __is_successful_place_trade()
-* [] Create build
+* [x] Create build
 * [] Create bash scripts and add execute rights (build.sh, deploy.sh, run.sh)
 
 ## Tier 2
