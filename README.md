@@ -1,5 +1,5 @@
 # Phemex futures place trades 🌟 🐟 🐻
-Application for entering pending orders from Excel on the Phemex exchange.
+Application for entering pending futures orders from Excel on the Phemex exchange.
 
 ## How to build
 ```bash
