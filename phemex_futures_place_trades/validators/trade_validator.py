@@ -46,7 +46,7 @@ class TradeValidator:
         else:
             logic_errors = logic_errors + \
                            self.__validate_smaller_than(trade, "Profit target 1", "Entry price") + \
-                           self.__validate_greater_than(trade, "Stop loss", "Entry price")
+                           self.__validate_greater_than(trade, "Entry price", "Stop loss")
 
         return logic_errors
 
