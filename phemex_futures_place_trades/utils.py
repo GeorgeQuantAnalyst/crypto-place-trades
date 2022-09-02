@@ -26,9 +26,6 @@ def load_trades(direction: str, portfolio: str) -> pd.DataFrame:
     trades_filtered = trades[trades["On exchange"] == portfolio]
     trades_filtered["Direction"] = direction
 
-    # For testing purpose first 10 trades 1/10, next 10 trade 1/2 position
-    trades_filtered["Position"] = trades_filtered["Position"] / 10
-
     logging.debug("Loaded {} trades for portfolio {}".format(trades_filtered.shape[0], portfolio))
     return trades_filtered
 
