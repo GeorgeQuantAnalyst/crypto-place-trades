@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 
 
@@ -39,11 +41,11 @@ class TradeValidator:
 
         if trade["Direction"] == "long":
             logic_errors = logic_errors + \
-                           self.__validate_greater_than(trade, "Profit target 1", "Entry price", ) + \
+                           self.__validate_greater_than(trade, "Entry price", "Profit target 1") + \
                            self.__validate_smaller_than(trade, "Stop loss", "Entry price")
         else:
             logic_errors = logic_errors + \
-                           self.__validate_smaller_than(trade, "Profit target 1", "Entry price", ) + \
+                           self.__validate_smaller_than(trade, "Profit target 1", "Entry price") + \
                            self.__validate_greater_than(trade, "Stop loss", "Entry price")
 
         return logic_errors
@@ -74,6 +76,9 @@ class TradeValidator:
         except ValueError:
             validation_errors.append("Attribute [{}] is not float number: {}".format(attribute, trade[attribute]))
 
+        if math.isnan(trade[attribute]):
+            validation_errors.append("Attribute [{}] is not float number: {}".format(attribute, trade[attribute]))
+
         return validation_errors
 
     @staticmethod
@@ -82,7 +87,7 @@ class TradeValidator:
         attribute_smaller_value = float(trade[attribute_smaller])
         attribute_bigger_value = float(trade[attribute_bigger])
 
-        if attribute_bigger_value > attribute_smaller_value:
+        if attribute_bigger_value < attribute_smaller_value:
             validation_errors.append("Attribute {} - {} must be greater than attribute {} - {}".format(
                 attribute_bigger, attribute_bigger_value,
                 attribute_smaller, attribute_smaller_value))
