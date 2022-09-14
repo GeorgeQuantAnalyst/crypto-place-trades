@@ -12,7 +12,7 @@
 **Bug**
 * None
 
-## Version 2.0.0rc1
+## Version 2.0.0
 - Available since: 1.9.2022
 
 **New feature**
@@ -24,3 +24,15 @@
 
 **Bug**
 * None
+
+## Version 2.0.1
+- Available since: 14.9.2022
+
+**New feature**
+* None
+
+**Improvement**
+* None
+
+**Bug**
+* **59f7d8da959f6956ae339d3bdf9aee214f5ccc22**: Fixed logging message mark price to last price
