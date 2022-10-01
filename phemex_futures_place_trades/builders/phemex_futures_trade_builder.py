@@ -1,7 +1,7 @@
 import pandas as pd
 
 
-class PhemexTradeBuilder:
+class PhemexFuturesTradeBuilder:
     LEVERAGE_MIN = 1
 
     def __init__(self, markets, phemex_client):

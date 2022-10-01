@@ -1,7 +1,7 @@
-phemexApiPortfolio1:
+phemexApiAccount1:
   apiKey: "***"
   secretKey: "***"
 
-phemexApiPortfolio2:
+phemexApiAccount2:
   apiKey: "***"
   secretKey: "***"

@@ -2,12 +2,12 @@
 
 # Constants
 VERSION=$1
-PACKAGE_NAME="phemex-futures-place-trades-$VERSION.tar.gz"
+PACKAGE_NAME="crypto-place-trades-$VERSION.tar.gz"
 APP_PACKAGE_FOLDER="dist"
-APP_FOLDER="$HOME/App/phemex-futures-place-trades"
+APP_FOLDER="$HOME/App/crypto-place-trades"
 
 echo "Start deploy app: $PACKAGE_NAME to $APP_FOLDER"
-rm -rf "$APP_FOLDER/phemex-futures-place-trades-$VERSION"
+rm -rf "$APP_FOLDER/crypto-place-trades-$VERSION"
 mkdir -p $APP_FOLDER
 cp "$APP_PACKAGE_FOLDER/$PACKAGE_NAME" "$APP_FOLDER"
 cd "$APP_FOLDER" || exit 1

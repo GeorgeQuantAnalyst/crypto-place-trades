@@ -2,7 +2,7 @@ import os
 
 from setuptools import setup, find_packages
 
-NAME = "phemex-futures-place-trades"
+NAME = "crypto-place-trades"
 DESCRIPTION = "Application for place a futures trade on the Phemex exchange."
 AUTHOR = "Jiri"
 URL = ""
