@@ -3,10 +3,10 @@ import sys
 
 import ccxt
 
-from phemex_futures_place_trades import __version__
-from phemex_futures_place_trades.okx_spot_service import OkxSpotService
-from phemex_futures_place_trades.phemex_futures_service import PhemexFuturesService
-from phemex_futures_place_trades.utils import load_config
+from crypto_place_trades import __version__
+from crypto_place_trades.okx_spot_service import OkxSpotService
+from crypto_place_trades.phemex_futures_service import PhemexFuturesService
+from crypto_place_trades.utils import load_config
 
 # Constants
 __logo__ = """

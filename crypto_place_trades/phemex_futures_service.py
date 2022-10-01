@@ -2,9 +2,9 @@ import logging
 
 import pandas as pd
 
-from phemex_futures_place_trades.builders.phemex_futures_trade_builder import PhemexFuturesTradeBuilder
-from phemex_futures_place_trades.utils import load_trades
-from phemex_futures_place_trades.validators.phemex_futures_trade_validator import PhemexFuturesTradeValidator
+from crypto_place_trades.builders.phemex_futures_trade_builder import PhemexFuturesTradeBuilder
+from crypto_place_trades.utils import load_trades
+from crypto_place_trades.validators.phemex_futures_trade_validator import PhemexFuturesTradeValidator
 
 
 class PhemexFuturesService:

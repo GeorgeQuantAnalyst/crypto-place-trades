@@ -1,5 +1,9 @@
 # Phemex futures place trades 🌟 🐟 🐻
-Application for entering pending futures orders from Excel on the Phemex exchange.
+Application for entering pending futures orders from Excel on different cryptocurrency exchanges.
+
+* Supported exchanges:
+    * Phemex futures
+    * Okx spot (will be soon)
 
 ## How to build
 ```bash
@@ -18,7 +22,8 @@ Application for entering pending futures orders from Excel on the Phemex exchang
 
 ## How to run
 ```bash
-./run.sh
+./phemex_futures_account1_place_trades.sh
+./phemex_futures_account2_place_trades.sh
 ```
 
 ## Technologies

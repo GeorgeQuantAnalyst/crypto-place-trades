@@ -18,7 +18,7 @@ with open(
 root = os.path.abspath(os.path.dirname(__file__))
 
 if not VERSION:
-    with open(os.path.join(root, "phemex_futures_place_trades", "__version__.py")) as f:
+    with open(os.path.join(root, "crypto_place_trades", "__version__.py")) as f:
         exec(f.read(), about)
 else:
     about["__version__"] = VERSION
