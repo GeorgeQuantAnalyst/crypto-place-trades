@@ -1,17 +1,17 @@
-import logging
 import logging.config
 import sys
 
 import ccxt
 
 from phemex_futures_place_trades import __version__
-from phemex_futures_place_trades.phemex_service import PhemexService
-from phemex_futures_place_trades.utils import parse_portfolio_from_input_parameters, load_config, load_trades
+from phemex_futures_place_trades.okx_spot_service import OkxSpotService
+from phemex_futures_place_trades.phemex_futures_service import PhemexFuturesService
+from phemex_futures_place_trades.utils import load_config
 
 # Constants
 __logo__ = """
 ---------------------------------------------------------------------
-phemex-futures-place-trades {}
+crypto-place-trades {}
 ---------------------------------------------------------------------
 """.format(__version__.__version__)
 CONFIG_FILE_PATH = "config.yaml"
@@ -23,27 +23,35 @@ logging.config.fileConfig(fname=LOGGER_CONFIG_FILE_PATH, disable_existing_logger
 logging.info(__logo__)
 config = load_config(CONFIG_FILE_PATH)
 
-phemex_client_p1 = ccxt.phemex({
-    "apiKey": config["phemexApiPortfolio1"]["apiKey"],
-    "secret": config["phemexApiPortfolio1"]["secretKey"],
+phemex_client_account1 = ccxt.phemex({
+    "apiKey": config["phemexApiAccount1"]["apiKey"],
+    "secret": config["phemexApiAccount1"]["secretKey"],
     'options': {'defaultType': 'swap'}
 })
-phemex_client_p2 = ccxt.phemex({
-    "apiKey": config["phemexApiPortfolio2"]["apiKey"],
-    "secret": config["phemexApiPortfolio2"]["secretKey"],
+phemex_client_account2 = ccxt.phemex({
+    "apiKey": config["phemexApiAccount2"]["apiKey"],
+    "secret": config["phemexApiAccount2"]["secretKey"],
     'options': {'defaultType': 'swap'}
 })
+
+okx_client = ccxt.okx()
 
 if __name__ == "__main__":
     try:
-        portfolio = parse_portfolio_from_input_parameters()
-        phemex_client = phemex_client_p1 if portfolio == "P1" else phemex_client_p2
-        phemex_service = PhemexService(phemex_client)
+        phemex_futures_service = PhemexFuturesService(phemex_client_account1, phemex_client_account2)
+        okx_spot_service = OkxSpotService(okx_client)
 
-        logging.info("Start place trades on Phemex exchange - portfolio {}".format(portfolio))
-        phemex_service.place_trades_on_exchange(load_trades("long", portfolio))
-        phemex_service.place_trades_on_exchange(load_trades("short", portfolio))
-        logging.info("Finished place trades on exchange - portfolio {}".format(portfolio))
+        exchange = sys.argv[1]
+        if exchange == "PhemexFuturesAccount1":
+            phemex_futures_service.place_trades_on_exchange(account=1)
+
+        if exchange == "PhemexFuturesAccount2":
+            phemex_futures_service.place_trades_on_exchange(account=2)
+
+        if exchange == "OkxSpot":
+            okx_spot_service.place_trades_on_exchange()
+
+
     except:
         logging.exception("Error in application:")
         sys.exit(1)

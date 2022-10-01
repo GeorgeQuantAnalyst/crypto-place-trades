@@ -28,3 +28,5 @@ Application for entering pending futures orders from Excel on the Phemex exchang
 
 ## Usefully websites
 * [Phmex api error codes](https://github.com/phemex/phemex-api-docs/blob/master/TradingErrorCode.md)
+
+[Release notes](RELEASE_NOTES.md)

@@ -2,20 +2,33 @@ import logging
 
 import pandas as pd
 
-from phemex_futures_place_trades.builders.phemex_trade_builder import PhemexTradeBuilder
-from phemex_futures_place_trades.validators.trade_validator import TradeValidator
+from phemex_futures_place_trades.builders.phemex_futures_trade_builder import PhemexFuturesTradeBuilder
+from phemex_futures_place_trades.utils import load_trades
+from phemex_futures_place_trades.validators.phemex_futures_trade_validator import PhemexFuturesTradeValidator
 
 
-class PhemexService:
+class PhemexFuturesService:
     SEPARATOR = "---------------------------------------------"
 
-    def __init__(self, phemex_client):
-        self.phemex_client = phemex_client
-        self.markets = phemex_client.load_markets()
-        self.phemex_trade_builder = PhemexTradeBuilder(self.markets, phemex_client)
-        self.trade_validator = TradeValidator(self.markets)
+    def __init__(self, phemex_client_account1, phemex_client_account2):
+        self.phemex_client_account1 = phemex_client_account1
+        self.phemex_client_account2 = phemex_client_account2
+        self.markets = phemex_client_account1.load_markets()
+        self.phemex_trade_builder = PhemexFuturesTradeBuilder(self.markets, phemex_client_account1)
+        self.trade_validator = PhemexFuturesTradeValidator(self.markets)
 
-    def place_trades_on_exchange(self, trades: pd.DataFrame):
+    def place_trades_on_exchange(self, account: int):
+        portfolio = "P1" if account == 1 else "P2"
+        logging.info("Start place trades on Phemex futures exchange - portfolio {}".format(portfolio))
+        trades_long = load_trades("long", portfolio, "data/phemex_futures_trades.xlsx")
+        trades_short = load_trades("short", portfolio, "data/phemex_futures_trades.xlsx")
+        self.__place_trades_on_exchange(trades_long, account)
+        self.__place_trades_on_exchange(trades_short, account)
+        logging.info("Finished place trades on Phemex futures exchange - portfolio {}".format(portfolio))
+        pass
+
+    def __place_trades_on_exchange(self, trades: pd.DataFrame, account: int):
+        phemex_client = self.phemex_client_account1 if account == 1 else self.phemex_client_account2
         logging.info(self.SEPARATOR)
         logging.info("Start place trades on exchange")
         logging.info(self.SEPARATOR + "\n")
@@ -32,7 +45,7 @@ class PhemexService:
 
             self.__log_trade_info(trade, "Start place trade on Phemex exchange")
             self.__log_estimate_pnl_info(trade)
-            leverage_response = self.phemex_client.set_leverage(phemex_trade["leverage"], phemex_trade["ticker"])
+            leverage_response = phemex_client.set_leverage(phemex_trade["leverage"], phemex_trade["ticker"])
             if self.__is_successful_set_leverage(leverage_response):
                 self.__log_trade_info(trade, "Successfully set leverage {}", phemex_trade["leverage"])
             else:
@@ -41,7 +54,7 @@ class PhemexService:
                 self.__log_trade_error(trade, "Skip trade because not correct set leverage.")
                 continue
 
-            create_order_response = self.phemex_client.create_order(
+            create_order_response = phemex_client.create_order(
                 phemex_trade["ticker"],
                 phemex_trade["order_type"],
                 phemex_trade["side"],
@@ -96,11 +109,11 @@ class PhemexService:
             estimated_loss = (trade["Stop loss"] - trade["Entry price"]) * trade["Position"]
 
             pt_m = "If Last Price goes up to {}, it will trigger market order Take Profit estimated profit: {} USD." \
-                .format(trade["Profit target 1"], round(estimated_profit,2))
+                .format(trade["Profit target 1"], round(estimated_profit, 2))
             self.__log_trade_info(trade, pt_m)
 
             sl_m = "If Last Price goes down to {}, it will trigger market order Stop Loss estimated loss: {} USD." \
-                .format(trade["Stop loss"], round(estimated_loss,2))
+                .format(trade["Stop loss"], round(estimated_loss, 2))
             self.__log_trade_info(trade, sl_m)
         else:
             estimated_profit = (trade["Entry price"] - trade["Profit target 1"]) * trade["Position"]

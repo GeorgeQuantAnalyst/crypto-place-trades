@@ -3,7 +3,7 @@ import math
 import pandas as pd
 
 
-class TradeValidator:
+class PhemexFuturesTradeValidator:
     LEVERAGE_MAX = 20
 
     def __init__(self, markets):
