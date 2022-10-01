@@ -5,3 +5,7 @@ phemexApiAccount1:
 phemexApiAccount2:
   apiKey: "***"
   secretKey: "***"
+
+okxApi:
+  apiKey: "***"
+  secretKey: "***"

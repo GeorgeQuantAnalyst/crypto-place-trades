@@ -6,6 +6,8 @@ include build.sh
 include deploy.sh
 
 include data/phemex_futures_trades.xlsx
+include data/okx_spot_trades.xlsx
 
-include phemex_futures_account1_place_trade.sh
-include phemex_futures_account2_place_trade.sh
+include phemex_futures_account1_place_trades.sh
+include phemex_futures_account2_place_trades.sh
+include okx_spot_place_trades.sh

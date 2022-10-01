@@ -4,6 +4,7 @@ import sys
 import ccxt
 
 from phemex_futures_place_trades import __version__
+from phemex_futures_place_trades.okx_spot_service import OkxSpotService
 from phemex_futures_place_trades.phemex_futures_service import PhemexFuturesService
 from phemex_futures_place_trades.utils import load_config
 
@@ -33,9 +34,12 @@ phemex_client_account2 = ccxt.phemex({
     'options': {'defaultType': 'swap'}
 })
 
+okx_client = ccxt.okx()
+
 if __name__ == "__main__":
     try:
         phemex_futures_service = PhemexFuturesService(phemex_client_account1, phemex_client_account2)
+        okx_spot_service = OkxSpotService(okx_client)
 
         exchange = sys.argv[1]
         if exchange == "PhemexFuturesAccount1":
@@ -43,6 +47,9 @@ if __name__ == "__main__":
 
         if exchange == "PhemexFuturesAccount2":
             phemex_futures_service.place_trades_on_exchange(account=2)
+
+        if exchange == "OkxSpot":
+            okx_spot_service.place_trades_on_exchange()
 
 
     except:
