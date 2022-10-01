@@ -37,7 +37,7 @@
 **Bugs**
 * [59f7d](https://github.com/GeorgeQuantAnalyst/phemex-futures-place-trades/commit/59f7d8da959f6956ae339d3bdf9aee214f5ccc22) - Fixed logging message mark price to last price
 
-## Version 3.0.0
+## Version 3.0.1
 - Available since: 1.10.2022
 
 **New features**
