@@ -17,18 +17,17 @@ class PhemexFuturesService:
         self.phemex_trade_builder = PhemexFuturesTradeBuilder(self.markets, phemex_client_account1)
         self.trade_validator = PhemexFuturesTradeValidator(self.markets)
 
-    def place_trades_on_exchange(self, account: int):
-        portfolio = "P1" if account == 1 else "P2"
-        logging.info("Start place trades on Phemex futures exchange - portfolio {}".format(portfolio))
-        trades_long = load_trades("long", portfolio, "data/phemex_futures_trades.xlsx")
-        trades_short = load_trades("short", portfolio, "data/phemex_futures_trades.xlsx")
+    def place_trades_on_exchange(self, account: str):
+        logging.info("Start place trades on Phemex futures exchange - account {}".format(account))
+        trades_long = load_trades("long", account, "data/phemex_futures_trades.xlsx")
+        trades_short = load_trades("short", account, "data/phemex_futures_trades.xlsx")
         self.__place_trades_on_exchange(trades_long, account)
         self.__place_trades_on_exchange(trades_short, account)
-        logging.info("Finished place trades on Phemex futures exchange - portfolio {}".format(portfolio))
+        logging.info("Finished place trades on Phemex futures exchange - account {}".format(account))
         pass
 
-    def __place_trades_on_exchange(self, trades: pd.DataFrame, account: int):
-        phemex_client = self.phemex_client_account1 if account == 1 else self.phemex_client_account2
+    def __place_trades_on_exchange(self, trades: pd.DataFrame, account: str):
+        phemex_client = self.phemex_client_account1 if account == "A1" else self.phemex_client_account2
         logging.info(self.SEPARATOR)
         logging.info("Start place trades on exchange")
         logging.info(self.SEPARATOR + "\n")

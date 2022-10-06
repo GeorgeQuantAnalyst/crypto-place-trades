@@ -43,10 +43,10 @@ if __name__ == "__main__":
 
         exchange = sys.argv[1]
         if exchange == "PhemexFuturesAccount1":
-            phemex_futures_service.place_trades_on_exchange(account=1)
+            phemex_futures_service.place_trades_on_exchange(account="A1")
 
         if exchange == "PhemexFuturesAccount2":
-            phemex_futures_service.place_trades_on_exchange(account=2)
+            phemex_futures_service.place_trades_on_exchange(account="A2")
 
         if exchange == "OkxSpot":
             okx_spot_service.place_trades_on_exchange()
