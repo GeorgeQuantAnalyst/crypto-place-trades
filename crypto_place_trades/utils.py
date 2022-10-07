@@ -16,12 +16,12 @@ def load_config(file_path):
         exit(1)
 
 
-def load_trades(direction: str, portfolio: str, trades_excel_path: str) -> pd.DataFrame:
-    logging.debug("Loading {} trades from excel for portfolio {}".format(direction, portfolio))
+def load_trades(direction: str, account: str, trades_excel_path: str) -> pd.DataFrame:
+    logging.debug("Loading {} trades from excel for account {}".format(direction, account))
     sheet_name = "TradesLong" if direction == "long" else "TradesShort"
     trades = pd.read_excel(trades_excel_path, sheet_name=sheet_name)
-    trades_filtered = trades[trades["On exchange"] == portfolio]
+    trades_filtered = trades[trades["On exchange"] == account]
     trades_filtered["Direction"] = direction
 
-    logging.debug("Loaded {} trades for portfolio {}".format(trades_filtered.shape[0], portfolio))
+    logging.debug("Loaded {} trades for account {}".format(trades_filtered.shape[0], account))
     return trades_filtered
