@@ -1,11 +1,14 @@
-phemexApiAccount1:
-  apiKey: "***"
-  secretKey: "***"
+base:
 
-phemexApiAccount2:
-  apiKey: "***"
-  secretKey: "***"
+exchangeApi:
+  phemexApiAccount1:
+    apiKey: "***"
+    secretKey: "***"
 
-okxApi:
-  apiKey: "***"
-  secretKey: "***"
+  phemexApiAccount2:
+    apiKey: "***"
+    secretKey: "***"
+
+  okxApi:
+    apiKey: "***"
+    secretKey: "***"

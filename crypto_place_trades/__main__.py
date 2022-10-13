@@ -24,13 +24,13 @@ logging.info(__logo__)
 config = load_config(CONFIG_FILE_PATH)
 
 phemex_client_account1 = ccxt.phemex({
-    "apiKey": config["phemexApiAccount1"]["apiKey"],
-    "secret": config["phemexApiAccount1"]["secretKey"],
+    "apiKey": config["exchangeApi"]["phemexApiAccount1"]["apiKey"],
+    "secret": config["exchangeApi"]["phemexApiAccount1"]["secretKey"],
     'options': {'defaultType': 'swap'}
 })
 phemex_client_account2 = ccxt.phemex({
-    "apiKey": config["phemexApiAccount2"]["apiKey"],
-    "secret": config["phemexApiAccount2"]["secretKey"],
+    "apiKey": config["exchangeApi"]["phemexApiAccount2"]["apiKey"],
+    "secret": config["exchangeApi"]["phemexApiAccount2"]["secretKey"],
     'options': {'defaultType': 'swap'}
 })
 
@@ -42,15 +42,16 @@ if __name__ == "__main__":
         okx_spot_service = OkxSpotService(okx_client)
 
         exchange = sys.argv[1]
-        if exchange == "PhemexFuturesAccount1":
-            phemex_futures_service.place_trades_on_exchange(account="A1")
 
-        if exchange == "PhemexFuturesAccount2":
-            phemex_futures_service.place_trades_on_exchange(account="A2")
-
-        if exchange == "OkxSpot":
-            okx_spot_service.place_trades_on_exchange()
-
+        match exchange:
+            case "PhemexFuturesAccount1":
+                phemex_futures_service.place_trades_on_exchange(account="A1")
+            case "PhemexFuturesAccount2":
+                phemex_futures_service.place_trades_on_exchange(account="A2")
+            case "OkxSpot":
+                okx_spot_service.place_trades_on_exchange()
+            case _:
+                raise Exception("Not supported exchange - {}".format(exchange))
 
     except:
         logging.exception("Error in application:")
