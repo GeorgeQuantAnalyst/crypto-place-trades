@@ -9,7 +9,8 @@ class PhemexFuturesTradeBuilder:
         self.phemex_client = phemex_client
 
     def build(self, trade: pd.Series):
-        ticker = "{}/USD:USD".format(trade["Asset"].replace("USDT", "").replace("100", "100 ").replace("1000", "1000 "))
+        ticker = "{}/USD:USD".format(
+            trade["Asset"].replace("USDPERP", "").replace("100", "100 ").replace("1000", "1000 "))
         market = self.markets[ticker]
         contract_size_raw = market["info"]["contractSize"]
         contract_size = float(contract_size_raw.split()[0])

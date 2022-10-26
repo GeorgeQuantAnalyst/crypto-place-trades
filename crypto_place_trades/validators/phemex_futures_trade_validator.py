@@ -62,7 +62,7 @@ class PhemexFuturesTradeValidator:
     @staticmethod
     def __validate_exist_ticker_on_exchange(asset, markets):
         validation_errors = []
-        ticker = "{}/USD:USD".format(asset.replace("USDT", "").replace("100", "100 ").replace("1000", "1000 "))
+        ticker = "{}/USD:USD".format(asset.replace("USDPERP", "").replace("100", "100 ").replace("1000", "1000 "))
         if ticker not in markets:
             validation_errors.append("Not valid Asset {} for trading ticker: {}".format(asset, ticker))
 
