@@ -2,6 +2,8 @@ import math
 
 import pandas as pd
 
+from crypto_place_trades.utils import format_ticker_for_phemex_exchange
+
 
 class PhemexFuturesTradeValidator:
     LEVERAGE_MAX = 20
@@ -62,10 +64,7 @@ class PhemexFuturesTradeValidator:
     @staticmethod
     def __validate_exist_ticker_on_exchange(asset, markets):
         validation_errors = []
-        ticker = "{}/USD:USD".format(asset.replace("USD", "").replace("u1000000", "1000000 ")
-                                     .replace("u100000", "100000 ").replace("u10000", "10000 ")
-                                     .replace("u1000", "1000 ").replace("u100", "100 ")
-                                     .replace("u10", "10 ").replace("uBTC", "BTC"))
+        ticker = format_ticker_for_phemex_exchange(asset)
         if ticker not in markets:
             validation_errors.append("Not valid Asset {} for trading ticker: {}".format(asset, ticker))
 

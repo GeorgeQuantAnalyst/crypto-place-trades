@@ -1,5 +1,7 @@
 import pandas as pd
 
+from crypto_place_trades.utils import format_ticker_for_phemex_exchange
+
 
 class PhemexFuturesTradeBuilder:
     LEVERAGE_MIN = 1
@@ -9,10 +11,7 @@ class PhemexFuturesTradeBuilder:
         self.phemex_client = phemex_client
 
     def build(self, trade: pd.Series):
-        ticker = "{}/USD:USD".format(
-            trade["Asset"].replace("uBTC", "BTC").replace("USD", "").replace("u1000000", "1000000 ")
-            .replace("u100000", "100000 ").replace("u10000", "10000 ")
-            .replace("u1000", "1000 ").replace("u100", "100 ").replace("u10", "10 "))
+        ticker = format_ticker_for_phemex_exchange(trade["Asset"])
         market = self.markets[ticker]
         contract_size_raw = market["info"]["contractSize"]
         contract_size = float(contract_size_raw.split()[0])
