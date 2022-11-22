@@ -1,4 +1,5 @@
 import pandas as pd
+from ccxt import Exchange
 
 from crypto_place_trades.utils import format_ticker_for_phemex_exchange
 
@@ -6,11 +7,11 @@ from crypto_place_trades.utils import format_ticker_for_phemex_exchange
 class PhemexFuturesTradeBuilder:
     LEVERAGE_MIN = 1
 
-    def __init__(self, markets, phemex_client):
+    def __init__(self, markets, phemex_client: Exchange):
         self.markets = markets
         self.phemex_client = phemex_client
 
-    def build(self, trade: pd.Series):
+    def build(self, trade: pd.Series) -> dict:
         ticker = format_ticker_for_phemex_exchange(trade["Asset"])
         market = self.markets[ticker]
         contract_size_raw = market["info"]["contractSize"]
@@ -30,6 +31,6 @@ class PhemexFuturesTradeBuilder:
                            "slTrigger": "ByLastPrice"}
                 }
 
-    def __parse_leverage(self, trade):
+    def __parse_leverage(self, trade: pd.Series) -> float:
         leverage = round(trade["Leverage"], 2)
         return leverage if leverage > self.LEVERAGE_MIN else self.LEVERAGE_MIN

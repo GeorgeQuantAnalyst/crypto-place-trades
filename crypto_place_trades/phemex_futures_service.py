@@ -1,6 +1,7 @@
 import logging
 
 import pandas as pd
+from ccxt import Exchange
 
 from crypto_place_trades.builders.phemex_futures_trade_builder import PhemexFuturesTradeBuilder
 from crypto_place_trades.utils import load_trades
@@ -10,23 +11,22 @@ from crypto_place_trades.validators.phemex_futures_trade_validator import Phemex
 class PhemexFuturesService:
     SEPARATOR = "---------------------------------------------"
 
-    def __init__(self, phemex_client_account1, phemex_client_account2):
+    def __init__(self, phemex_client_account1: Exchange, phemex_client_account2: Exchange):
         self.phemex_client_account1 = phemex_client_account1
         self.phemex_client_account2 = phemex_client_account2
         self.markets = phemex_client_account1.load_markets()
         self.phemex_trade_builder = PhemexFuturesTradeBuilder(self.markets, phemex_client_account1)
         self.trade_validator = PhemexFuturesTradeValidator(self.markets)
 
-    def place_trades_on_exchange(self, account: str):
+    def place_trades_on_exchange(self, account: str) -> None:
         logging.info("Start place trades on Phemex futures exchange - account {}".format(account))
         trades_long = load_trades("long", account, "data/phemex_futures_trades.xlsx")
         trades_short = load_trades("short", account, "data/phemex_futures_trades.xlsx")
         self.__place_trades_on_exchange(trades_long, account)
         self.__place_trades_on_exchange(trades_short, account)
         logging.info("Finished place trades on Phemex futures exchange - account {}".format(account))
-        pass
 
-    def __place_trades_on_exchange(self, trades: pd.DataFrame, account: str):
+    def __place_trades_on_exchange(self, trades: pd.DataFrame, account: str) -> None:
         phemex_client = self.phemex_client_account1 if account == "A1" else self.phemex_client_account2
         logging.info(self.SEPARATOR)
         logging.info("Start place trades on exchange")
@@ -41,9 +41,12 @@ class PhemexFuturesService:
                 continue
 
             phemex_trade = self.phemex_trade_builder.build(trade)
-
             self.__log_trade_info(trade, "Start place trade on Phemex exchange")
             self.__log_estimate_pnl_info(trade)
+
+            logging.debug("Trade: {}".format(phemex_trade))
+            logging.debug("Leverage: {}".format(phemex_trade["leverage"]))
+
             leverage_response = phemex_client.set_leverage(phemex_trade["leverage"], phemex_trade["ticker"])
             if self.__is_successful_set_leverage(leverage_response):
                 self.__log_trade_info(trade, "Successfully set leverage {}", phemex_trade["leverage"])
@@ -75,26 +78,25 @@ class PhemexFuturesService:
         logging.info(self.SEPARATOR)
 
     @staticmethod
-    def __is_successful_set_leverage(leverage_response):
+    def __is_successful_set_leverage(leverage_response: dict) -> bool:
         logging.debug("Leverage response: {}".format(leverage_response))
         return leverage_response["code"] == "0" and leverage_response["data"] == "OK"
 
     @staticmethod
-    def __is_successful_place_trade(create_order_response):
+    def __is_successful_place_trade(create_order_response: dict) -> bool:
         logging.debug("Create order response: {}".format(create_order_response))
         return create_order_response["info"]["bizError"] == "0"
 
     @staticmethod
-    def __log_trade_info(trade, message, params=[]):
+    def __log_trade_info(trade: pd.DataFrame, message: str, params=[]) -> None:
         info_message = "Trade {}-{}: " + message
         logging.info(info_message.format(
             trade["Asset"],
             trade["Direction"],
             params
         ))
-
     @staticmethod
-    def __log_trade_error(trade, message, params=[]):
+    def __log_trade_error(trade: pd.DataFrame, message: str, params=[]) -> None:
         error_message = "Trade {}-{}: " + message
         logging.info(error_message.format(
             trade["Asset"],
@@ -102,7 +104,7 @@ class PhemexFuturesService:
             params
         ))
 
-    def __log_estimate_pnl_info(self, trade):
+    def __log_estimate_pnl_info(self, trade: pd.DataFrame) -> None:
         if trade["Direction"] == "long":
             estimated_profit = (trade["Profit target 1"] - trade["Entry price"]) * trade["Position"]
             estimated_loss = (trade["Stop loss"] - trade["Entry price"]) * trade["Position"]
