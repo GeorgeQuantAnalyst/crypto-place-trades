@@ -1,12 +1,6 @@
 include requirements.txt
 include config.yaml
 include logger.conf
-include prepare.sh
-include build.sh
-include deploy.sh
 
 include data/*
-
-include phemex_futures_account1_place_trades.sh
-include phemex_futures_account2_place_trades.sh
-include okx_spot_place_trades.sh
+include *.sh

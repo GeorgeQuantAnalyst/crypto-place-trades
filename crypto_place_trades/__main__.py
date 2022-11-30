@@ -3,40 +3,29 @@ import sys
 
 import ccxt
 
-from crypto_place_trades import __version__
+from crypto_place_trades.constants import LOGGER_CONFIG_FILE_PATH, __logo__, CONFIG_FILE_PATH
 from crypto_place_trades.okx_spot_service import OkxSpotService
 from crypto_place_trades.phemex_futures_service import PhemexFuturesService
 from crypto_place_trades.utils import load_config
 
-# Constants
-__logo__ = """
----------------------------------------------------------------------
-crypto-place-trades {}
----------------------------------------------------------------------
-""".format(__version__.__version__)
-CONFIG_FILE_PATH = "config.yaml"
-LOGGER_CONFIG_FILE_PATH = "logger.conf"
-TRADES_EXCEL_PATH = "data/trades_{}.xlsx"
-
-# Init
-logging.config.fileConfig(fname=LOGGER_CONFIG_FILE_PATH, disable_existing_loggers=False)
-logging.info(__logo__)
-config = load_config(CONFIG_FILE_PATH)
-
-phemex_client_account1 = ccxt.phemex({
-    "apiKey": config["exchangeApi"]["phemexApiAccount1"]["apiKey"],
-    "secret": config["exchangeApi"]["phemexApiAccount1"]["secretKey"],
-    'options': {'defaultType': 'swap'}
-})
-phemex_client_account2 = ccxt.phemex({
-    "apiKey": config["exchangeApi"]["phemexApiAccount2"]["apiKey"],
-    "secret": config["exchangeApi"]["phemexApiAccount2"]["secretKey"],
-    'options': {'defaultType': 'swap'}
-})
-
-okx_client = ccxt.okx()
-
 if __name__ == "__main__":
+    logging.config.fileConfig(fname=LOGGER_CONFIG_FILE_PATH, disable_existing_loggers=False)
+    logging.info(__logo__)
+    config = load_config(CONFIG_FILE_PATH)
+
+    phemex_client_account1 = ccxt.phemex({
+        "apiKey": config["exchangeApi"]["phemexApiAccount1"]["apiKey"],
+        "secret": config["exchangeApi"]["phemexApiAccount1"]["secretKey"],
+        'options': {'defaultType': 'swap'}
+    })
+    phemex_client_account2 = ccxt.phemex({
+        "apiKey": config["exchangeApi"]["phemexApiAccount2"]["apiKey"],
+        "secret": config["exchangeApi"]["phemexApiAccount2"]["secretKey"],
+        'options': {'defaultType': 'swap'}
+    })
+
+    okx_client = ccxt.okx()
+
     try:
         phemex_futures_service = PhemexFuturesService(phemex_client_account1, phemex_client_account2)
         okx_spot_service = OkxSpotService(okx_client)

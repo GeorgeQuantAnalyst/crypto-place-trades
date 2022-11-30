@@ -4,7 +4,7 @@ import pandas as pd
 import yaml
 
 
-def load_config(file_path):
+def load_config(file_path: str) -> dict:
     try:
         with open(file_path, 'r') as stream:
             return yaml.safe_load(stream)
@@ -25,3 +25,16 @@ def load_trades(direction: str, account: str, trades_excel_path: str) -> pd.Data
 
     logging.debug("Loaded {} trades for account {}".format(trades_filtered.shape[0], account))
     return trades_filtered
+
+
+def format_ticker_for_phemex_exchange(ticker: str) -> str:
+    ticker_formatted = ticker.replace("uBTC", "BTC") \
+        .replace("USD", "") \
+        .replace("u1000000", "1000000 ") \
+        .replace("u100000", "100000 ") \
+        .replace("u10000", "10000 ") \
+        .replace("u1000", "1000 ") \
+        .replace("u100", "100 ") \
+        .replace("u10", "10 ")
+
+    return "{}/USD:USD".format(ticker_formatted)

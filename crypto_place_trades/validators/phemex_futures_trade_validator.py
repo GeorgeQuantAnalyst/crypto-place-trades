@@ -2,6 +2,8 @@ import math
 
 import pandas as pd
 
+from crypto_place_trades.utils import format_ticker_for_phemex_exchange
+
 
 class PhemexFuturesTradeValidator:
     LEVERAGE_MAX = 20
@@ -9,7 +11,7 @@ class PhemexFuturesTradeValidator:
     def __init__(self, markets):
         self.markets = markets
 
-    def validate(self, trade: pd.Series):
+    def validate(self, trade: pd.Series) -> list:
         missing_attribute_errors = self.__validate_exist_attribute(trade, "Asset") + \
                                    self.__validate_exist_attribute(trade, "Entry price") + \
                                    self.__validate_exist_attribute(trade, "Stop loss") + \
@@ -51,7 +53,7 @@ class PhemexFuturesTradeValidator:
         return logic_errors
 
     @staticmethod
-    def __validate_exist_attribute(trade, attribute):
+    def __validate_exist_attribute(trade: pd.Series, attribute: str) -> list:
         validation_errors = []
 
         if attribute not in trade:
@@ -60,16 +62,16 @@ class PhemexFuturesTradeValidator:
         return validation_errors
 
     @staticmethod
-    def __validate_exist_ticker_on_exchange(asset, markets):
+    def __validate_exist_ticker_on_exchange(asset: str, markets: list) -> list:
         validation_errors = []
-        ticker = "{}/USD:USD".format(asset.replace("USDPERP", "").replace("100", "100 ").replace("1000", "1000 "))
+        ticker = format_ticker_for_phemex_exchange(asset)
         if ticker not in markets:
             validation_errors.append("Not valid Asset {} for trading ticker: {}".format(asset, ticker))
 
         return validation_errors
 
     @staticmethod
-    def __validate_float_number(trade, attribute):
+    def __validate_float_number(trade: pd.Series, attribute: str) -> list:
         validation_errors = []
         try:
             float(trade[attribute])
@@ -82,7 +84,7 @@ class PhemexFuturesTradeValidator:
         return validation_errors
 
     @staticmethod
-    def __validate_greater_than(trade, attribute_smaller, attribute_bigger):
+    def __validate_greater_than(trade: pd.Series, attribute_smaller: str, attribute_bigger: str) -> list:
         validation_errors = []
         attribute_smaller_value = float(trade[attribute_smaller])
         attribute_bigger_value = float(trade[attribute_bigger])
@@ -95,7 +97,7 @@ class PhemexFuturesTradeValidator:
         return validation_errors
 
     @staticmethod
-    def __validate_smaller_than(trade, attribute_smaller, attribute_bigger):
+    def __validate_smaller_than(trade: pd.Series, attribute_smaller: str, attribute_bigger: str) -> list:
         validation_errors = []
         attribute_smaller_value = float(trade[attribute_smaller])
         attribute_bigger_value = float(trade[attribute_bigger])
@@ -108,7 +110,7 @@ class PhemexFuturesTradeValidator:
         return validation_errors
 
     @staticmethod
-    def __validate_greater_than_value(trade, attribute, value):
+    def __validate_greater_than_value(trade: pd.Series, attribute: str, value: float) -> list:
         validation_errors = []
 
         if float(trade[attribute]) < value:
@@ -118,7 +120,7 @@ class PhemexFuturesTradeValidator:
         return validation_errors
 
     @staticmethod
-    def __validate_smaller_than_value(trade, attribute, value):
+    def __validate_smaller_than_value(trade: pd.Series, attribute: str, value: float) -> list:
         validation_errors = []
 
         if float(trade[attribute]) > value:
@@ -128,7 +130,7 @@ class PhemexFuturesTradeValidator:
         return validation_errors
 
     @staticmethod
-    def __validate_allowed_values(trade, attribute, allowed_values):
+    def __validate_allowed_values(trade: pd.Series, attribute: str, allowed_values: list) -> list:
         validation_errors = []
 
         if trade[attribute] not in allowed_values:

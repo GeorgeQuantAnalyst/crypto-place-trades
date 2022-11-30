@@ -1,7 +1,18 @@
 # Release notes
 
+## Version 3.0.3
+Available since: 30.11.2022
+
+```
+Bug
+```
+* [76cbf1f](https://github.com/GeorgeQuantAnalyst/crypto-place-trades/commit/76cbf1f9dd9159437c08309800ef332413e5334a) - Fix: renaming and fixing phemex tickers and corecting placing trades
+
+
 
 ## Version 3.0.2
+Available since: 27.10.2022
+
 ```
 Improvement
 ```
